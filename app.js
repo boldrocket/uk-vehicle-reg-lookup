@@ -33,8 +33,10 @@ app.get('/check/:reg', function(req, res) {
             };
 
             if (!body || !body.data) {
+                result.match = false;
                 result.message = 'No vehicle found';
             } else {
+                result.match = true;
                 // PROCESS BODY
                 var vehicleData = body.data;
 
