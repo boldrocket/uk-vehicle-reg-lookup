@@ -48,10 +48,18 @@ app.get('/check/:reg', function(req, res) {
                 }
 
                 result.vehicleData = vehicleData;
+
+                // Get vehicle image
+                getImageBase64(result.vehicleData.ABICode, function(data) {
+                    result.vehicleImage = data;
+
+                    // Send response
+                    res.json( result );
+
+
+                });
             }
 
-            // Send response
-            res.json( result );
         });
 
     });
@@ -60,3 +68,25 @@ app.get('/check/:reg', function(req, res) {
 
 app.listen(PORT);
 console.log('Listening on port', PORT);
+
+
+/* HELPER FUNCTIONS */
+
+function getImageBase64(abiCode, cb) {
+    request({
+        method: 'GET',
+        url: 'https://motor.confused.com/Image/VehicleImage/' + abiCode,
+        encoding: null,
+        jar: true       // Remember cookies
+    }, function(err, response, body) {
+
+        if (!err && response.statusCode == 200) {
+            data = "data:" + response.headers["content-type"] + ";base64," + new Buffer(body).toString('base64');
+            cb(data);
+        }
+
+    });
+}
+
+//request.get('http://tinypng.org/images/example-shrunk-8cadd4c7.png', function (error, response, body) {
+//});
